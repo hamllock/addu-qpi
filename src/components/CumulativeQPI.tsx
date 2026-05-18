@@ -293,7 +293,7 @@ Subject Name  Units  Grade`}
             <div className="text-xs font-mono text-muted-foreground/70 uppercase tracking-[0.2em] mb-1">
               Overall
             </div>
-            <div className="text-7xl md:text-8xl font-display text-primary leading-none tabular-nums tracking-tight">
+            <div className="text-7xl md:text-8xl font-sans text-primary leading-none tabular-nums tracking-tight">
               {qpi.toFixed(2)}
             </div>
           </motion.div>
@@ -745,7 +745,7 @@ Subject Name  Units  Grade`}
                     <span className="text-xs font-mono text-muted-foreground/70 uppercase tracking-wider">
                       Projected Overall
                     </span>
-                      <span className="text-3xl font-display text-primary tabular-nums tracking-tight">
+                      <span className="text-3xl font-sans text-primary tabular-nums tracking-tight">
                         {projectedQPI.toFixed(2)}
                       </span>
                     </motion.div>

@@ -46,7 +46,7 @@ export function QPICalculator() {
           transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
           className="relative"
         >
-          <div className="text-8xl md:text-9xl font-display text-primary leading-none tabular-nums tracking-tight">
+          <div className="text-8xl md:text-9xl font-sans text-primary leading-none tabular-nums tracking-tight">
             {qpi.toFixed(2)}
           </div>
           <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
