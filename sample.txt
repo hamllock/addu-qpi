@@ -1,0 +1,112 @@
+
+
+Skip to main content
+Home
+STUDENT INFORMATION SYSTEM
+ATENEO DE DAVAO UNIVERSITY
+mlavales's picture
+
+    MARC LINNUS VALES
+    Edit My Profile
+
+TASK
+
+    Final Exam Schedule
+    My Enrollment
+    My Grades
+    My Account Balance
+    My Curriculum
+    Change Pin
+    Log out
+
+Forms
+
+    AMC SDB Form
+    QPI Appeal
+    Shifting Form
+    Leave of Absence
+    Reinstatement Application
+    Faculty Evaluation Form (OJT)
+
+Memoranda from the AVP office
+
+    Discounted Tuition and Miscellaneous Fees for AY 2020-2021
+    Discounted Tuition and Miscellaneous Fees for AY 2020-2021 (Annex A)
+    Discounted Tuition and Miscellaneous Fees for AY 2020-2021 (Annex B)
+
+Links
+
+    List of Graduating Students (Undergrad)
+    List of Graduating Students (Grad and Law School)
+    Reinstatement Application
+    Privacy Notice
+
+
+My Curriculum
+							
+MY CURRICULUM FOR BS-COMPSC CURRICULUM YEAR 2019 YEAR LEVEL	SEMESTER	SUBJ. NO	DESCRIPTIVE TITLE	UNITS	GRADE	PREREQUISITE	REMARKS
+1st Yr.	1st Semester	Philo 1000	PHILOSOPHY	3			
+1st Yr.	1st Semester	ASF 1102	NATIONAL SERVICE TRAINING PROGRAM - CIVIC WELFARE TRAINING SERVICE 1	3	B+		
+1st Yr.	1st Semester	ASF 1000	ARRUPE SOCIAL FORMATION 0	2			
+1st Yr.	1st Semester	ASF 1101	ARRUPE SOCIAL FORMATION 1	2	A		
+1st Yr.	1st Semester	GE 1105	UNDERSTANDING THE SELF	3	A		
+1st Yr.	1st Semester	GE 1106	PURPOSIVE COMMUNICATION	3	B		
+1st Yr.	1st Semester	GE 1108	MATHEMATICS IN THE MODERN WORLD	3	B+		
+1st Yr.	1st Semester	PE 1114	PATH-FIT I	2	A		
+1st Yr.	1st Semester	CS 1130	INTRODUCTION TO COMPUTING	3	A		
+1st Yr.	1st Semester	CS 1131	COMPUTER PROGRAMMING 1	3	A		
+1st Yr.	2nd Semester	Theo 1000	THEOLOGY	3			
+1st Yr.	2nd Semester	GE 1210	READINGS IN PHILIPPINE HISTORY	3	B+		
+1st Yr.	2nd Semester	GE 1211	THE CONTEMPORARY WORLD	3	B+		
+1st Yr.	2nd Semester	GE 1212	SCIENCE, TECHNOLOGY AND SOCIETY	3	B+		
+1st Yr.	2nd Semester	ASF 1203	NATIONAL SERVICE TRAINING PROGRAM - CIVIC WELFARE TRAINING SERVICE 2	3	B	ASF 1102	
+1st Yr.	2nd Semester	PE 1215	PATH-FIT II	2	A	PE 1114	
+1st Yr.	2nd Semester	CS 1232	DISCRETE STRUCTURES 1	3	A		
+1st Yr.	2nd Semester	CS 1233	COMPUTER PROGRAMMING 2	3	A	CS 1131	
+1st Yr.	Summer	CS 1334	DISCRETE STRUCTURES 2	3	B+		
+1st Yr.	Summer	MATH 1368	COLLEGE TRIGONOMETRY	3	A		
+2nd Yr.	1st Semester	GE 1107	ART APPRECIATION	3	A		
+2nd Yr.	1st Semester	GE 1109	ETHICS	3	C+		
+2nd Yr.	1st Semester	GE 3118	ELECTIVE 1	3	A		
+2nd Yr.	1st Semester	PE 2116	PATH-FIT III	2	B+	PE 1114	
+2nd Yr.	1st Semester	CS 2136	OBJECT-ORIENTED PROGRAMMING	3	A	CS 1233	
+2nd Yr.	1st Semester	CS 2135	DATA STRUCTURES AND ALGORITHMS	3	B+	CS 1334, CS 1233	
+2nd Yr.	1st Semester	CS 2137	INFORMATION MANAGEMENT	3	A	CS 1233	
+2nd Yr.	1st Semester	MATH 2171	DIFFERENTIAL CALCULUS	5	A	MATH 1368	
+2nd Yr.	2nd Semester	GE 1213	LIFE AND WORKS OF RIZAL	3	A		
+2nd Yr.	2nd Semester	GE 3219	ELECTIVE 2	3	A		
+2nd Yr.	2nd Semester	PE 2217	PATH-FIT IV	2	A	PE 1114	
+2nd Yr.	2nd Semester	CS 2238	BASIC ELECTRONICS	5	B+		
+2nd Yr.	2nd Semester	CS 2239	SOFTWARE ENGINEERING 1	3	B+	CS 2136	
+2nd Yr.	2nd Semester	MATH 2272	INTEGRAL CALCULUS	5	A	MATH 2171	
+2nd Yr.	2nd Semester	CS 2240	APPLICATIONS DEVELOPMENT AND EMERGING TECHNOLOGIES	3	A	CS 2137	
+2nd Yr.	2nd Semester	IT 2241	EVENT-DRIVEN PROGRAMMING	3	A	CS 2136	
+3rd Yr.	1st Semester	GE 4120	ELECTIVE 3	3			
+3rd Yr.	1st Semester	MATH 2138	LINEAR ALGEBRA	3	B+	GE 1108	
+3rd Yr.	1st Semester	CS 3142	ALGORITHMS AND COMPLEXITY	3	B+	CS 2135	
+3rd Yr.	1st Semester	CS 3143	AUTOMATA THEORY AND FORMAL LANGUAGES	3	B+	CS 2135	
+3rd Yr.	1st Semester	CS 3144	HUMAN COMPUTER INTERACTION	3	B	CS 2136	
+3rd Yr.	1st Semester	CS 3145	SOFTWARE ENGINEERING 2	3	B+		
+3rd Yr.	2nd Semester	CS 3247	NETWORKS AND COMMUNICATIONS	3	A		
+3rd Yr.	2nd Semester	CS 3246	ELECTIVE MATH/CS ELECTIVE 1	3	Pending evaluation		
+3rd Yr.	2nd Semester	CS 3248	CS THESIS WRITING 1	3	B+		
+3rd Yr.	2nd Semester	CS 3249	PROGRAMMING LANGUAGES	3	B+		
+3rd Yr.	2nd Semester	MATH 3274	PROBABILITY AND STATISTICS	3	B+	MATH 2272	
+3rd Yr.	Summer	CS 3350	CS PRACTICUM	3	A	CS 3145	
+4th Yr.	1st Semester	CS 4151	CS ELECTIVE 2	3	B+	CS 2135	
+4th Yr.	1st Semester	CS 4152	DIGITAL DESIGN	3	A	CS 2135	
+4th Yr.	1st Semester	CS 4153	OPERATING SYSTEMS	3	B	CS 2135	
+4th Yr.	1st Semester	CS 4155	CS ELECTIVE 3	3	A		
+4th Yr.	1st Semester	CS 4154	CS THESIS WRITING 2	3	B	CS 3248	
+4th Yr.	2nd Semester	ASF 4204	SENIORS' INTEGRATION PROGRAM	2	Pending evaluation	ASF 1203	
+4th Yr.	2nd Semester	CS 4256	CS ELECTIVE 4	3	A	CS 3246	
+4th Yr.	2nd Semester	CS 4257	ARCHITECTURE AND ORGANIZATION	3		CS 4152	
+4th Yr.	2nd Semester	IT 4258	INFORMATION ASSURANCE AND SECURITY 1	3		GE 1109	
+4th Yr.	2nd Semester	CS 4253	SOCIAL ISSUES AND PROFESSIONAL PRACTICE	3	Pending evaluation	GE 1109, CS 3350	
+Copyright © 2026 Ateneo de Davao University
+Roxas Avenue, 8016 Davao City, Philippines
+Tel No: +63-82-221-2411
+v. 1.0
+Management Information Services
+Finster Building, Room F613-D
+Local 8280

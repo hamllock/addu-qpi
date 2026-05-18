@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 97%;        /* #f8f8f8 Alabaster */
+    --foreground: 0 0% 27%;        /* #444444 Mine Shaft */
+    --card: 0 0% 100%;             /* #ffffff White */
+    --card-foreground: 0 0% 27%;   /* #444444 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 27%;
+    --primary: 204 70% 53%;        /* #3498db Ateneo Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 27%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 54%;  /* #898989 Gray */
+    --accent: 204 50% 94%;
+    --accent-foreground: 204 70% 53%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 80%;            /* #cccccc Silver */
+    --input: 0 0% 80%;
+    --ring: 204 70% 53%;
+    --radius: 0.75rem;
+    --grid-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .dark {
+    --background: 222 35% 7%;
+    --foreground: 210 20% 96%;
+    --card: 222 28% 11%;
+    --card-foreground: 210 20% 96%;
+    --popover: 222 28% 11%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 210 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 20% 18%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 222 18% 15%;
+    --muted-foreground: 215 12% 58%;
+    --accent: 210 40% 22%;
+    --accent-foreground: 210 95% 55%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 210 20% 96%;
+    --border: 222 18% 20%;
+    --input: 222 18% 20%;
+    --ring: 210 95% 55%;
+    --grid-color: rgba(255, 255, 255, 0.012);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+* {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
