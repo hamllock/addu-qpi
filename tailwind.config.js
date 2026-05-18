@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Cinzel", "serif"],
-        sans: ["Montserrat", "sans-serif"],
-        mono: ["Montserrat", "sans-serif"],
+        display: ["Trajan Pro", "serif"],
+        sans: ["Gotham", "sans-serif"],
+        mono: ["Gotham", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
