@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseCurriculumText, calculateQPI, GRADE_POINTS } from "@/lib/qpi";
 import type { Grade, SubjectRecord } from "@/lib/qpi";
@@ -407,304 +408,244 @@ Subject Name  Units  Grade`}
         </motion.button>
       )}
 
-      {/* Projection Panel Overlay */}
-      <AnimatePresence>
-        {showProjection && (
-          <>
+      {/* Projection Modal */}
+      {createPortal(
+        <AnimatePresence>
+          {showProjection && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowProjection(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", bounce: 0, duration: 0.35 }}
-              className="fixed right-0 top-0 h-full z-50 w-[460px] max-w-[90vw] bg-card border-l border-border shadow-2xl flex flex-col"
             >
-              {/* Panel Header */}
-              <div className="flex items-center justify-between px-8 py-6 border-b border-border flex-shrink-0">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-display text-xl text-foreground">
-                      Projection
+              <div
+                className="w-full max-w-xl max-h-[85vh] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div className="flex items-center justify-between px-8 py-6 border-b border-border flex-shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <AlertTriangle className="w-5 h-5 text-primary" />
                     </div>
-                    <div className="text-xs font-mono text-muted-foreground/50 uppercase tracking-wider">
-                      {missingSubjects.length} pending &middot;{" "}
-                      {extraSubjects.length} extra
-                    </div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowProjection(false)}
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground/40 hover:text-foreground hover:bg-muted/30 transition-all"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Panel Body */}
-              <div className="flex-1 overflow-y-auto scrollbar-thin px-8 py-6 space-y-8">
-                {/* Cum Laude Thresholds */}
-                <div className="space-y-4">
-                  <div className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
-                    Cum Laude Thresholds
-                  </div>
-                  {CUM_LAUDE_THRESHOLDS.map((t) => {
-                    const currentDelta = qpi - t.value;
-                    const projectedDelta = projectedQPI - t.value;
-                    const met = currentDelta >= 0;
-                    const willMeet = projectedDelta >= 0 && !met;
-
-                    return (
-                      <div key={t.value} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={cn(
-                                "font-mono text-sm font-bold",
-                                met
-                                  ? "text-primary"
-                                  : willMeet
-                                    ? "text-yellow-400"
-                                    : "text-muted-foreground/50",
-                              )}
-                            >
-                              {t.short}
-                            </span>
-                            <span className="text-xs font-mono text-muted-foreground/40">
-                              {t.label}
-                            </span>
-                          </div>
-                          <span
-                            className={cn(
-                              "font-mono text-xs font-bold",
-                              met
-                                ? "text-primary"
-                                : willMeet
-                                  ? "text-yellow-400"
-                                  : "text-muted-foreground/40",
-                            )}
-                          >
-                            {met
-                              ? "ACHIEVED"
-                              : `need ${(t.value - qpi).toFixed(2)}`}
-                          </span>
-                        </div>
-                        <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{
-                              width: `${Math.min(100, (projectedQPI / t.value) * 100)}%`,
-                            }}
-                            transition={{
-                              duration: 0.6,
-                              ease: [0.23, 1, 0.32, 1],
-                            }}
-                            className={cn(
-                              "h-full rounded-full",
-                              met
-                                ? "bg-primary"
-                                : willMeet
-                                  ? "bg-yellow-400"
-                                  : "bg-red-400/50",
-                            )}
-                          />
-                        </div>
-                        <div className="flex justify-between text-[10px] font-mono text-muted-foreground/25">
-                          <span>{qpi.toFixed(2)}</span>
-                          <span>{projectedQPI.toFixed(2)}</span>
-                          <span>{t.value.toFixed(2)}</span>
-                        </div>
+                    <div>
+                      <div className="font-display text-xl text-foreground">Projection</div>
+                      <div className="text-xs font-mono text-muted-foreground/50 uppercase tracking-wider">
+                        {missingSubjects.length} pending &middot; {extraSubjects.length} extra
                       </div>
-                    );
-                  })}
-                </div>
-
-                <div className="h-px bg-border" />
-
-                {/* Missing Subjects */}
-                {missingSubjects.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Target className="w-4 h-4 text-primary" />
-                      <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
-                        Pending Subjects
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {missingSubjects.map((s) => (
-                        <div
-                          key={s._index}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border"
-                        >
-                          <span className="flex-1 text-sm font-mono text-muted-foreground truncate">
-                            {s.name || "Untitled"}
-                          </span>
-                          <span className="text-xs font-mono text-muted-foreground/30 w-8 text-right">
-                            {s.units}un
-                          </span>
-                          <select
-                            className={cn(
-                              "w-20 border border-input rounded-lg px-2 py-1.5 text-center text-xs font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
-                              projectedGrades[s._index]
-                                ? gradeColor(projectedGrades[s._index])
-                                : "text-muted-foreground/40",
-                            )}
-                            value={projectedGrades[s._index] || ""}
-                            onChange={(e) => {
-                              const val = e.target.value as Grade | "";
-                              setProjectedGrades((prev) => {
-                                const next = { ...prev };
-                                if (val) next[s._index] = val;
-                                else delete next[s._index];
-                                return next;
-                              });
-                            }}
-                          >
-                            <option
-                              value=""
-                              className="bg-card text-muted-foreground/60"
-                            >
-                              —
-                            </option>
-                            {Object.keys(GRADE_POINTS).map((g) => (
-                              <option key={g} value={g} className="bg-card">
-                                {g}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      ))}
                     </div>
                   </div>
-                )}
-
-                {/* Extra Subjects */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Plus className="w-4 h-4 text-primary" />
-                    <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
-                      Extra Subjects
-                    </span>
-                  </div>
-                  {extraSubjects.length === 0 ? (
-                    <p className="text-sm font-mono text-muted-foreground/30 px-1">
-                      Add subjects outside your curriculum or overload here.
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      <AnimatePresence mode="popLayout">
-                        {extraSubjects.map((s, i) => (
-                          <motion.div
-                            key={`extra-${i}`}
-                            layout
-                            initial={{ opacity: 0, x: -12 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{
-                              opacity: 0,
-                              x: 12,
-                              height: 0,
-                              marginBottom: 0,
-                            }}
-                            transition={{ duration: 0.2 }}
-                            className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/20 border border-border"
-                          >
-                            <input
-                              type="text"
-                              placeholder="Subject"
-                              className="flex-1 bg-transparent border-none text-sm font-mono outline-none placeholder:text-muted-foreground/20 min-w-0"
-                              value={s.name}
-                              onChange={(e) =>
-                                updateExtraSubject(i, "name", e.target.value)
-                              }
-                            />
-                            <input
-                              type="number"
-                              className="w-14 bg-muted/30 border border-input rounded-lg px-2 py-1.5 text-center text-sm font-mono outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                              value={s.units}
-                              onChange={(e) =>
-                                updateExtraSubject(
-                                  i,
-                                  "units",
-                                  parseInt(e.target.value) || 0,
-                                )
-                              }
-                            />
-                            <select
-                              className={cn(
-                                "w-20 border border-input rounded-lg px-1.5 py-1.5 text-center text-xs font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
-                                gradeColor(s.grade),
-                              )}
-                              value={s.grade}
-                              onChange={(e) =>
-                                updateExtraSubject(
-                                  i,
-                                  "grade",
-                                  e.target.value as Grade,
-                                )
-                              }
-                            >
-                              {Object.keys(GRADE_POINTS).map((g) => (
-                                <option key={g} value={g} className="bg-card">
-                                  {g}
-                                </option>
-                              ))}
-                            </select>
-                            <button
-                              onClick={() => removeExtraSubject(i)}
-                              className="text-muted-foreground/20 hover:text-destructive transition-colors flex-shrink-0"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  )}
                   <button
-                    onClick={addExtraSubject}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border border-dashed border-border hover:border-primary/30 hover:bg-primary/[0.02] text-muted-foreground/40 hover:text-primary text-sm font-mono transition-all"
+                    onClick={() => setShowProjection(false)}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground/40 hover:text-foreground hover:bg-muted/30 transition-all"
                   >
-                    <Plus className="w-4 h-4" />
-                    Add Extra Subject
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
-              </div>
 
-              {/* Panel Footer */}
-              <div className="flex-shrink-0 px-8 py-5 border-t border-border bg-muted/10">
-                {hasProjectionInputs ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center justify-between"
-                  >
-                    <span className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider">
-                      Projected Overall
+                {/* Modal Body */}
+                <div className="flex-1 overflow-y-auto min-h-0 px-8 py-6 space-y-8">
+                  {/* Cum Laude Thresholds */}
+                  <div className="space-y-4">
+                    <div className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
+                      Cum Laude Thresholds
+                    </div>
+                    {CUM_LAUDE_THRESHOLDS.map((t) => {
+                      const currentDelta = qpi - t.value;
+                      const projectedDelta = projectedQPI - t.value;
+                      const met = currentDelta >= 0;
+                      const willMeet = projectedDelta >= 0 && !met;
+
+                      return (
+                        <div key={t.value} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className={cn(
+                                "font-mono text-sm font-bold",
+                                met ? "text-primary" : willMeet ? "text-yellow-400" : "text-muted-foreground/50",
+                              )}>
+                                {t.short}
+                              </span>
+                              <span className="text-xs font-mono text-muted-foreground/40">{t.label}</span>
+                            </div>
+                            <span className={cn(
+                              "font-mono text-xs font-bold",
+                              met ? "text-primary" : willMeet ? "text-yellow-400" : "text-muted-foreground/40",
+                            )}>
+                              {met ? "ACHIEVED" : `need ${(t.value - qpi).toFixed(2)}`}
+                            </span>
+                          </div>
+                          <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${Math.min(100, (projectedQPI / t.value) * 100)}%` }}
+                              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                              className={cn(
+                                "h-full rounded-full",
+                                met ? "bg-primary" : willMeet ? "bg-yellow-400" : "bg-red-400/50",
+                              )}
+                            />
+                          </div>
+                          <div className="flex justify-between text-[10px] font-mono text-muted-foreground/25">
+                            <span>{qpi.toFixed(2)}</span>
+                            <span>{projectedQPI.toFixed(2)}</span>
+                            <span>{t.value.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="h-px bg-border" />
+
+                  {/* Missing Subjects */}
+                  {missingSubjects.length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
+                          Pending Subjects
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        {missingSubjects.map((s) => (
+                          <div
+                            key={s._index}
+                            className="flex items-center gap-3 p-3 rounded-xl bg-muted/20 border border-border"
+                          >
+                            <span className="flex-1 text-sm font-mono text-muted-foreground truncate">
+                              {s.name || "Untitled"}
+                            </span>
+                            <span className="text-xs font-mono text-muted-foreground/30 w-8 text-right">{s.units}un</span>
+                            <select
+                              className={cn(
+                                "w-20 border border-input rounded-lg px-2 py-1.5 text-center text-xs font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
+                                projectedGrades[s._index]
+                                  ? gradeColor(projectedGrades[s._index])
+                                  : "text-muted-foreground/40",
+                              )}
+                              value={projectedGrades[s._index] || ""}
+                              onChange={(e) => {
+                                const val = e.target.value as Grade | "";
+                                setProjectedGrades((prev) => {
+                                  const next = { ...prev };
+                                  if (val) next[s._index] = val;
+                                  else delete next[s._index];
+                                  return next;
+                                });
+                              }}
+                            >
+                              <option value="" className="bg-card text-muted-foreground/60">—</option>
+                              {Object.keys(GRADE_POINTS).map((g) => (
+                                <option key={g} value={g} className="bg-card">{g}</option>
+                              ))}
+                            </select>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Extra Subjects */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-primary" />
+                      <span className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/50 font-bold">
+                        Extra Subjects
+                      </span>
+                    </div>
+                    {extraSubjects.length === 0 ? (
+                      <p className="text-sm font-mono text-muted-foreground/30 px-1">
+                        Add subjects outside your curriculum or overload here.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <AnimatePresence mode="popLayout">
+                          {extraSubjects.map((s, i) => (
+                            <motion.div
+                              key={`extra-${i}`}
+                              layout
+                              initial={{ opacity: 0, x: -12 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 12, height: 0, marginBottom: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/20 border border-border"
+                            >
+                              <input
+                                type="text"
+                                placeholder="Subject"
+                                className="flex-1 bg-transparent border-none text-sm font-mono outline-none placeholder:text-muted-foreground/20 min-w-0"
+                                value={s.name}
+                                onChange={(e) => updateExtraSubject(i, "name", e.target.value)}
+                              />
+                              <input
+                                type="number"
+                                className="w-14 bg-muted/30 border border-input rounded-lg px-2 py-1.5 text-center text-sm font-mono outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                value={s.units}
+                                onChange={(e) => updateExtraSubject(i, "units", parseInt(e.target.value) || 0)}
+                              />
+                              <select
+                                className={cn(
+                                  "w-20 border border-input rounded-lg px-1.5 py-1.5 text-center text-xs font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
+                                  gradeColor(s.grade),
+                                )}
+                                value={s.grade}
+                                onChange={(e) => updateExtraSubject(i, "grade", e.target.value as Grade)}
+                              >
+                                {Object.keys(GRADE_POINTS).map((g) => (
+                                  <option key={g} value={g} className="bg-card">{g}</option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={() => removeExtraSubject(i)}
+                                className="text-muted-foreground/20 hover:text-destructive transition-colors flex-shrink-0"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    )}
+                    <button
+                      onClick={addExtraSubject}
+                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border border-dashed border-border hover:border-primary/30 hover:bg-primary/[0.02] text-muted-foreground/40 hover:text-primary text-sm font-mono transition-all"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Extra Subject
+                    </button>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="flex-shrink-0 px-8 py-5 border-t border-border bg-muted/10">
+                  {hasProjectionInputs ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider">
+                        Projected Overall
+                      </span>
+                      <span className="text-3xl font-display text-primary tabular-nums tracking-tight">
+                        {projectedQPI.toFixed(2)}
+                      </span>
+                    </motion.div>
+                  ) : (
+                    <span className="text-xs font-mono text-muted-foreground/30">
+                      Assign grades to pending or extra subjects to see your projected QPI.
                     </span>
-                    <span className="text-3xl font-display text-primary tabular-nums tracking-tight">
-                      {projectedQPI.toFixed(2)}
-                    </span>
-                  </motion.div>
-                ) : (
-                  <span className="text-xs font-mono text-muted-foreground/30">
-                    Assign grades to pending or extra subjects to see your
-                    projected QPI.
-                  </span>
-                )}
+                  )}
+                </div>
               </div>
             </motion.div>
-          </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
 
       {/* Add Subject Modal */}
       <AnimatePresence>
