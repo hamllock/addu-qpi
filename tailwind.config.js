@@ -19,8 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["DM Serif Display", "serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        display: ["Cinzel", "serif"],
+        sans: ["Montserrat", "sans-serif"],
+        mono: ["Montserrat", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

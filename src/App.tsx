@@ -30,7 +30,7 @@ function App() {
     tabs.find((t) => t.id === activeTab)?.component || QPICalculator;
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-mono flex items-center justify-center p-4 md:p-8 selection:bg-primary/30 selection:text-primary-foreground relative">
+    <div className="min-h-screen bg-background text-foreground font-sans flex items-center justify-center p-4 md:p-8 selection:bg-primary/30 selection:text-primary-foreground relative">
       {/* Ambient glow */}
       <div className="fixed top-1/4 right-1/4 w-[40vw] h-[40vw] bg-primary/5 rounded-full blur-[120px] -z-10 animate-pulse-glow" />
       <div className="fixed bottom-1/4 left-1/4 w-[30vw] h-[30vw] bg-accent/8 rounded-full blur-[100px] -z-10" />
