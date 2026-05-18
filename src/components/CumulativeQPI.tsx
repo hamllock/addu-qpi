@@ -164,6 +164,11 @@ export function CumulativeQPI() {
     return calculateQPI([...withProjections, ...extraSubjects]);
   }, [subjects, projectedGrades, extraSubjects, excludedFromProjection]);
 
+  const gradedUnits = useMemo(
+    () => subjects.filter((s) => s.included !== false && s.grade !== "N/A").reduce((sum, s) => sum + s.units, 0),
+    [subjects],
+  );
+
   const hasProjectionInputs =
     Object.keys(projectedGrades).length > 0 || extraSubjects.length > 0 || Object.keys(excludedFromProjection).length > 0;
 
@@ -476,6 +481,11 @@ Subject Name  Units  Grade`}
                       const met = currentDelta >= 0;
                       const willMeet = projectedDelta >= 0 && !met;
 
+                      const needed = t.value - qpi;
+                      const aUnitsNeeded = needed > 0 && gradedUnits > 0
+                        ? Math.ceil((t.value * gradedUnits - qpi * gradedUnits) / (4.0 - t.value) / 3)
+                        : 0;
+
                       return (
                         <div key={t.value} className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -508,7 +518,11 @@ Subject Name  Units  Grade`}
                             >
                               {met
                                 ? "ACHIEVED"
-                                : `need ${(t.value - qpi).toFixed(2)}`}
+                                : `need ${(t.value - qpi).toFixed(3)}${
+                                    aUnitsNeeded > 0
+                                      ? ` · ${aUnitsNeeded} A${aUnitsNeeded > 1 ? "'s" : ""} (3 units)`
+                                      : ""
+                                  }`}
                             </span>
                           </div>
                           <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
