@@ -141,10 +141,14 @@ export function CumulativeQPI() {
   const qpi = calculateQPI(subjects);
 
   const missingSubjects = useMemo(
-    () => subjects.reduce((acc, s, i) => {
-      if (s.included === false) acc.push({ ...s, _index: i });
-      return acc;
-    }, [] as (SubjectRecord & { _index: number })[]),
+    () =>
+      subjects.reduce(
+        (acc, s, i) => {
+          if (s.included === false) acc.push({ ...s, _index: i });
+          return acc;
+        },
+        [] as (SubjectRecord & { _index: number })[],
+      ),
     [subjects],
   );
 
@@ -252,7 +256,6 @@ Subject Name  Units  Grade`}
             Parse &amp; Calculate
           </span>
         </Button>
-
       </motion.div>
     );
   }
@@ -403,7 +406,7 @@ Subject Name  Units  Grade`}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-30 flex items-center gap-3 bg-primary text-primary-foreground py-3.5 pl-3.5 pr-5 rounded-l-xl shadow-2xl hover:bg-primary/90 cursor-pointer"
         >
           <span className="font-mono text-xs font-bold uppercase tracking-wider whitespace-nowrap">
-            How F***ed am I?
+            Predictor Tool
           </span>
         </motion.button>
       )}
@@ -431,9 +434,12 @@ Subject Name  Units  Grade`}
                       <AlertTriangle className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <div className="font-display text-xl text-foreground">Projection</div>
+                      <div className="font-display text-xl text-foreground">
+                        Projection
+                      </div>
                       <div className="text-xs font-mono text-muted-foreground/50 uppercase tracking-wider">
-                        {missingSubjects.length} pending &middot; {extraSubjects.length} extra
+                        {missingSubjects.length} pending &middot;{" "}
+                        {extraSubjects.length} extra
                       </div>
                     </div>
                   </div>
@@ -462,29 +468,54 @@ Subject Name  Units  Grade`}
                         <div key={t.value} className="space-y-2">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <span className={cn(
-                                "font-mono text-sm font-bold",
-                                met ? "text-primary" : willMeet ? "text-yellow-400" : "text-muted-foreground/50",
-                              )}>
+                              <span
+                                className={cn(
+                                  "font-mono text-sm font-bold",
+                                  met
+                                    ? "text-primary"
+                                    : willMeet
+                                      ? "text-yellow-400"
+                                      : "text-muted-foreground/50",
+                                )}
+                              >
                                 {t.short}
                               </span>
-                              <span className="text-xs font-mono text-muted-foreground/40">{t.label}</span>
+                              <span className="text-xs font-mono text-muted-foreground/40">
+                                {t.label}
+                              </span>
                             </div>
-                            <span className={cn(
-                              "font-mono text-xs font-bold",
-                              met ? "text-primary" : willMeet ? "text-yellow-400" : "text-muted-foreground/40",
-                            )}>
-                              {met ? "ACHIEVED" : `need ${(t.value - qpi).toFixed(2)}`}
+                            <span
+                              className={cn(
+                                "font-mono text-xs font-bold",
+                                met
+                                  ? "text-primary"
+                                  : willMeet
+                                    ? "text-yellow-400"
+                                    : "text-muted-foreground/40",
+                              )}
+                            >
+                              {met
+                                ? "ACHIEVED"
+                                : `need ${(t.value - qpi).toFixed(2)}`}
                             </span>
                           </div>
                           <div className="h-2 bg-muted/30 rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${Math.min(100, (projectedQPI / t.value) * 100)}%` }}
-                              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                              animate={{
+                                width: `${Math.min(100, (projectedQPI / t.value) * 100)}%`,
+                              }}
+                              transition={{
+                                duration: 0.6,
+                                ease: [0.23, 1, 0.32, 1],
+                              }}
                               className={cn(
                                 "h-full rounded-full",
-                                met ? "bg-primary" : willMeet ? "bg-yellow-400" : "bg-red-400/50",
+                                met
+                                  ? "bg-primary"
+                                  : willMeet
+                                    ? "bg-yellow-400"
+                                    : "bg-red-400/50",
                               )}
                             />
                           </div>
@@ -518,7 +549,9 @@ Subject Name  Units  Grade`}
                             <span className="flex-1 text-sm font-mono text-muted-foreground truncate">
                               {s.name || "Untitled"}
                             </span>
-                            <span className="text-xs font-mono text-muted-foreground/30 w-8 text-right">{s.units}un</span>
+                            <span className="text-xs font-mono text-muted-foreground/30 w-8 text-right">
+                              {s.units}un
+                            </span>
                             <select
                               className={cn(
                                 "w-20 border border-input rounded-lg px-2 py-1.5 text-center text-xs font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
@@ -537,9 +570,16 @@ Subject Name  Units  Grade`}
                                 });
                               }}
                             >
-                              <option value="" className="bg-card text-muted-foreground/60">—</option>
+                              <option
+                                value=""
+                                className="bg-card text-muted-foreground/60"
+                              >
+                                —
+                              </option>
                               {Object.keys(GRADE_POINTS).map((g) => (
-                                <option key={g} value={g} className="bg-card">{g}</option>
+                                <option key={g} value={g} className="bg-card">
+                                  {g}
+                                </option>
                               ))}
                             </select>
                           </div>
@@ -569,7 +609,12 @@ Subject Name  Units  Grade`}
                               layout
                               initial={{ opacity: 0, x: -12 }}
                               animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 12, height: 0, marginBottom: 0 }}
+                              exit={{
+                                opacity: 0,
+                                x: 12,
+                                height: 0,
+                                marginBottom: 0,
+                              }}
                               transition={{ duration: 0.2 }}
                               className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/20 border border-border"
                             >
@@ -578,13 +623,21 @@ Subject Name  Units  Grade`}
                                 placeholder="Subject"
                                 className="flex-1 bg-transparent border-none text-sm font-mono outline-none placeholder:text-muted-foreground/20 min-w-0"
                                 value={s.name}
-                                onChange={(e) => updateExtraSubject(i, "name", e.target.value)}
+                                onChange={(e) =>
+                                  updateExtraSubject(i, "name", e.target.value)
+                                }
                               />
                               <input
                                 type="number"
                                 className="w-14 bg-muted/30 border border-input rounded-lg px-2 py-1.5 text-center text-sm font-mono outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 value={s.units}
-                                onChange={(e) => updateExtraSubject(i, "units", parseInt(e.target.value) || 0)}
+                                onChange={(e) =>
+                                  updateExtraSubject(
+                                    i,
+                                    "units",
+                                    parseInt(e.target.value) || 0,
+                                  )
+                                }
                               />
                               <select
                                 className={cn(
@@ -592,10 +645,18 @@ Subject Name  Units  Grade`}
                                   gradeColor(s.grade),
                                 )}
                                 value={s.grade}
-                                onChange={(e) => updateExtraSubject(i, "grade", e.target.value as Grade)}
+                                onChange={(e) =>
+                                  updateExtraSubject(
+                                    i,
+                                    "grade",
+                                    e.target.value as Grade,
+                                  )
+                                }
                               >
                                 {Object.keys(GRADE_POINTS).map((g) => (
-                                  <option key={g} value={g} className="bg-card">{g}</option>
+                                  <option key={g} value={g} className="bg-card">
+                                    {g}
+                                  </option>
                                 ))}
                               </select>
                               <button
@@ -636,15 +697,16 @@ Subject Name  Units  Grade`}
                     </motion.div>
                   ) : (
                     <span className="text-xs font-mono text-muted-foreground/30">
-                      Assign grades to pending or extra subjects to see your projected QPI.
+                      Assign grades to pending or extra subjects to see your
+                      projected QPI.
                     </span>
                   )}
                 </div>
               </div>
             </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body
+          )}
+        </AnimatePresence>,
+        document.body,
       )}
 
       {/* Add Subject Modal */}
