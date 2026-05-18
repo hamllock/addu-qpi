@@ -140,7 +140,10 @@ export function CumulativeQPI() {
   const qpi = calculateQPI(subjects);
 
   const missingSubjects = useMemo(
-    () => subjects.filter((s) => s.included === false),
+    () => subjects.reduce((acc, s, i) => {
+      if (s.included === false) acc.push({ ...s, _index: i });
+      return acc;
+    }, [] as (SubjectRecord & { _index: number })[]),
     [subjects],
   );
 
