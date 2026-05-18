@@ -69,24 +69,24 @@ export function QPICalculator() {
               <input
                 type="text"
                 placeholder="Subject"
-                className="flex-1 bg-muted/30 border border-input rounded-xl px-5 py-4 text-base font-mono placeholder:text-muted-foreground/30 focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all"
+                className="flex-1 bg-muted/30 border border-input rounded-xl px-5 py-4 text-base md:text-lg font-mono placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all"
                 value={s.name}
                 onChange={(e) => updateSubject(i, 'name', e.target.value)}
               />
               <div className="relative">
                 <input
                   type="number"
-                  className="w-24 bg-muted/30 border border-input rounded-xl px-4 py-4 text-base font-mono text-center focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-24 bg-muted/30 border border-input rounded-xl px-4 py-4 text-base md:text-lg font-mono text-center focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={s.units}
                   onChange={(e) => updateSubject(i, 'units', parseInt(e.target.value) || 0)}
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/40 font-mono pointer-events-none">
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60 font-mono pointer-events-none">
                   un
                 </span>
               </div>
               <select
                 className={cn(
-                  "w-28 bg-muted/30 border border-input rounded-xl px-3 py-4 text-base font-mono text-center outline-none transition-all cursor-pointer",
+                  "w-28 bg-muted/30 border border-input rounded-xl px-3 py-4 text-base md:text-lg font-mono text-center outline-none transition-all cursor-pointer",
                   s.grade === 'A' || s.grade === 'B+' ? "text-primary" : "text-foreground",
                   "focus:border-primary/40 focus:ring-2 focus:ring-primary/10",
                 )}

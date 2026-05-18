@@ -52,7 +52,7 @@ function App() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-        className="w-full max-w-lg md:max-w-5xl lg:max-w-[92vw] xl:max-w-[88vw] min-h-[600px] md:h-[90vh] flex flex-col md:flex-row bg-card/80 backdrop-blur-xl border border-border rounded-[2rem] overflow-hidden shadow-2xl"
+        className="w-full max-w-lg md:max-w-5xl lg:max-w-[92vw] xl:max-w-[88vw] min-h-0 md:min-h-0 md:h-[90vh] flex flex-col md:flex-row bg-card/80 backdrop-blur-xl border border-border rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl"
       >
         {/* Navigation */}
         <nav className="w-full md:w-[220px] flex-shrink-0 border-b md:border-b-0 md:border-r border-border bg-muted/20 flex flex-row md:flex-col items-stretch p-3 md:p-5 gap-1">
