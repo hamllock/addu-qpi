@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Trajan Pro", "serif"],
-        sans: ["Gotham", "sans-serif"],
-        mono: ["Gotham", "sans-serif"],
+        display: ["Cormorant Garamond", "serif"],
+        sans: ["DM Sans", "sans-serif"],
+        mono: ["DM Sans", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
