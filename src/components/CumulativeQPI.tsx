@@ -148,7 +148,7 @@ export function CumulativeQPI() {
     setExtraSubjects(extraSubjects.filter((_, i) => i !== index));
   };
 
-  const qpi = calculateQPI(subjects);
+  const qpi = useMemo(() => calculateQPI(subjects), [subjects]);
 
   const missingSubjects = useMemo(
     () =>
@@ -336,7 +336,7 @@ Subject Name  Units  Grade`}
   return (
     <div className="space-y-12 pb-28 relative">
       {/* Sticky Header - full width */}
-      <div className="sticky top-0 z-10 -mx-10 md:-mx-14 px-10 md:px-14 pt-10 md:pt-14 -mt-10 md:-mt-14 bg-card/85 backdrop-blur-xl border-b border-border pb-8">
+      <div className="sticky top-0 z-10 -mx-10 md:-mx-14 px-10 md:px-14 pt-10 md:pt-14 -mt-10 md:-mt-14 bg-card border-b border-border pb-8">
         <div className="flex justify-between items-end gap-6">
           <div className="space-y-2">
             <h2 className="font-display text-5xl md:text-6xl tracking-tight text-foreground leading-none">
@@ -380,11 +380,10 @@ Subject Name  Units  Grade`}
             </div>
 
             <div className="space-y-1.5">
-              <AnimatePresence mode="popLayout">
+              <AnimatePresence>
                 {groupSubjects.map((s) => (
                   <motion.div
                     key={s._index}
-                    layout
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 12, height: 0, marginBottom: 0 }}
@@ -746,11 +745,10 @@ Subject Name  Units  Grade`}
                       </p>
                     ) : (
                       <div className="space-y-2">
-                        <AnimatePresence mode="popLayout">
+                        <AnimatePresence>
                           {extraSubjects.map((s, i) => (
                             <motion.div
                               key={`extra-${i}`}
-                              layout
                               initial={{ opacity: 0, x: -12 }}
                               animate={{ opacity: 1, x: 0 }}
                               exit={{
@@ -1092,8 +1090,7 @@ Subject Name  Units  Grade`}
       )}
 
       {/* Floating Action Bar */}
-      <motion.div
-        layout
+      <div
         className="fixed bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 flex gap-3 md:gap-4 z-30 px-4 w-full max-w-lg md:max-w-none justify-center"
       >
         <Button
@@ -1115,7 +1112,7 @@ Subject Name  Units  Grade`}
             New Paste
           </span>
         </Button>
-      </motion.div>
+      </div>
     </div>
   );
 }
