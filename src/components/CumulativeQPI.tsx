@@ -1,6 +1,6 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { parseCurriculumText, calculateQPI, GRADE_POINTS } from "@/lib/qpi";
 import type { Grade, SubjectRecord } from "@/lib/qpi";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,18 @@ import {
   Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)")
+    setIsMobile(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
+  return isMobile
+}
 
 const CUM_LAUDE_THRESHOLDS = [
   { label: "Cum Laude", value: 3.4, short: "CL" },
@@ -149,6 +161,7 @@ export function CumulativeQPI() {
   };
 
   const qpi = useMemo(() => calculateQPI(subjects), [subjects]);
+  const isMobile = useIsMobile()
 
   const missingSubjects = useMemo(
     () =>
@@ -231,11 +244,12 @@ export function CumulativeQPI() {
 
   if (!isParsed) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="h-full flex flex-col justify-center max-w-2xl mx-auto space-y-12"
-      >
+      <MotionConfig reducedMotion={isMobile ? "always" : "never"}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="h-full flex flex-col justify-center max-w-2xl mx-auto space-y-12"
+        >
         <div className="text-center space-y-3">
           <h2 className="font-display text-6xl md:text-7xl tracking-tight text-foreground leading-none">
             Cumulative QPI
@@ -329,12 +343,14 @@ Subject Name  Units  Grade`}
             Parse &amp; Calculate
           </span>
         </Button>
-      </motion.div>
-    );
-  }
+          </motion.div>
+        </MotionConfig>
+      );
+    }
 
-  return (
-    <div className="space-y-12 pb-28 relative">
+    return (
+      <MotionConfig reducedMotion={isMobile ? "always" : "never"}>
+        <div className="space-y-12 pb-28 relative">
       {/* Sticky Header - full width */}
       <div className="sticky top-0 z-10 -mx-10 md:-mx-14 px-10 md:px-14 pt-10 md:pt-14 -mt-10 md:-mt-14 bg-card border-b border-border pb-8">
         <div className="flex justify-between items-end gap-6">
@@ -1114,5 +1130,6 @@ Subject Name  Units  Grade`}
         </Button>
       </div>
     </div>
-  );
-}
+      </MotionConfig>
+    );
+  }
