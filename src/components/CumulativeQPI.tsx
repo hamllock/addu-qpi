@@ -192,6 +192,29 @@ export function CumulativeQPI() {
     );
   }, [subjects]);
 
+  const sortedGroupEntries = useMemo(() => {
+    return Object.entries(grouped).sort(([aKey], [bKey]) => {
+      const aMatches = aKey.match(/^(\d+)/)
+      const bMatches = bKey.match(/^(\d+)/)
+
+      // Non-year keys (OOC, Other, Unknown) go to bottom
+      if (!aMatches && !bMatches) return aKey.localeCompare(bKey)
+      if (!aMatches) return 1
+      if (!bMatches) return -1
+
+      const aYear = parseInt(aMatches[1])
+      const bYear = parseInt(bMatches[1])
+      if (aYear !== bYear) return aYear - bYear
+
+      // Same year: 1st Sem → 0, 2nd Sem → 1, Summer → 2, rest → 99
+      const aSem = (aKey.split(" - ")[1] || "").trim()
+      const bSem = (bKey.split(" - ")[1] || "").trim()
+      const rank = (s: string) =>
+        /^1/i.test(s) ? 0 : /^2/i.test(s) ? 1 : /^s/i.test(s) ? 2 : 99
+      return rank(aSem) - rank(bSem)
+    })
+  }, [grouped])
+
   if (!isParsed) {
     return (
       <motion.div
@@ -307,7 +330,7 @@ Subject Name  Units  Grade`}
 
       {/* Grouped Subjects */}
       <div className="space-y-12">
-        {Object.entries(grouped).map(([groupKey, groupSubjects]) => (
+        {sortedGroupEntries.map(([groupKey, groupSubjects]) => (
           <motion.div
             key={groupKey}
             initial={{ opacity: 0, y: 16 }}
@@ -777,26 +800,19 @@ Subject Name  Units  Grade`}
       )}
 
       {/* Add Subject Modal */}
-      <AnimatePresence>
-        {showAddModal && (
-          <>
+      {createPortal(
+        <AnimatePresence>
+          {showAddModal && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowAddModal(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
             >
               <div
-                className="w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl pointer-events-auto overflow-hidden"
+                className="w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -1016,9 +1032,10 @@ Subject Name  Units  Grade`}
                 </div>
               </div>
             </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
 
       {/* Floating Action Bar */}
       <motion.div

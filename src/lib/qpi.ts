@@ -51,8 +51,8 @@ export function parseCurriculumText(text: string): SubjectRecord[] {
         title = parts[3]
         unitsStr = parts[4]
         gradeStr = parts[5]
-        year = parts[0]
-        semester = parts[1]
+        year = parts[0].replace(/Yr\./i, "Year").trim()
+        semester = parts[1].trim()
       } else {
         // Fallback: look for the units column (usually a single digit before grade or remarks)
         // We look for a pattern where units is a number 1-6
@@ -63,8 +63,8 @@ export function parseCurriculumText(text: string): SubjectRecord[] {
           title = parts[unitsIndex - 1]
           // Try to find year/sem if they were shifted
           if (unitsIndex >= 3) {
-            year = parts[0]
-            semester = parts[1]
+            year = parts[0].replace(/Yr\./i, "Year").trim()
+            semester = parts[1].trim()
           }
         }
       }
