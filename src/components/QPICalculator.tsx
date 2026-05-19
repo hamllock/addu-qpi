@@ -1,31 +1,35 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { GRADE_POINTS, calculateQPI } from '@/lib/qpi'
-import type { Grade, SubjectRecord } from '@/lib/qpi'
-import { Trash2, Plus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { GRADE_POINTS, calculateQPI } from "@/lib/qpi";
+import type { Grade, SubjectRecord } from "@/lib/qpi";
+import { Trash2, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function QPICalculator() {
   const [subjects, setSubjects] = useState<SubjectRecord[]>([
-    { name: '', units: 3, grade: 'A' }
-  ])
+    { name: "", units: 3, grade: "A" },
+  ]);
 
   const addRow = () => {
-    setSubjects([...subjects, { name: '', units: 3, grade: 'A' }])
-  }
+    setSubjects([...subjects, { name: "", units: 3, grade: "A" }]);
+  };
 
   const removeRow = (index: number) => {
-    setSubjects(subjects.filter((_, i) => i !== index))
-  }
+    setSubjects(subjects.filter((_, i) => i !== index));
+  };
 
-  const updateSubject = (index: number, field: keyof SubjectRecord, value: any) => {
-    const newSubjects = [...subjects]
-    newSubjects[index] = { ...newSubjects[index], [field]: value }
-    setSubjects(newSubjects)
-  }
+  const updateSubject = (
+    index: number,
+    field: keyof SubjectRecord,
+    value: any,
+  ) => {
+    const newSubjects = [...subjects];
+    newSubjects[index] = { ...newSubjects[index], [field]: value };
+    setSubjects(newSubjects);
+  };
 
-  const qpi = calculateQPI(subjects)
+  const qpi = calculateQPI(subjects);
 
   return (
     <div className="space-y-12 w-full">
@@ -35,9 +39,6 @@ export function QPICalculator() {
           <h2 className="font-display text-5xl md:text-6xl tracking-tight text-foreground leading-none">
             Semester QPI
           </h2>
-          <p className="text-base text-muted-foreground font-mono">
-            subjects &amp; grades
-          </p>
         </div>
         <motion.div
           key={qpi.toFixed(2)}
@@ -71,14 +72,16 @@ export function QPICalculator() {
                 placeholder="Subject"
                 className="flex-1 bg-muted/30 border border-input rounded-xl px-5 py-4 text-base md:text-lg font-mono placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all"
                 value={s.name}
-                onChange={(e) => updateSubject(i, 'name', e.target.value)}
+                onChange={(e) => updateSubject(i, "name", e.target.value)}
               />
               <div className="relative">
                 <input
                   type="number"
                   className="w-24 bg-muted/30 border border-input rounded-xl px-4 py-4 text-base md:text-lg font-mono text-center focus:border-primary/40 focus:ring-2 focus:ring-primary/10 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   value={s.units}
-                  onChange={(e) => updateSubject(i, 'units', parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    updateSubject(i, "units", parseInt(e.target.value) || 0)
+                  }
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60 font-mono pointer-events-none">
                   un
@@ -87,14 +90,20 @@ export function QPICalculator() {
               <select
                 className={cn(
                   "w-28 bg-muted/30 border border-input rounded-xl px-3 py-4 text-base md:text-lg font-mono text-center outline-none transition-all cursor-pointer",
-                  s.grade === 'A' || s.grade === 'B+' ? "text-primary" : "text-foreground",
+                  s.grade === "A" || s.grade === "B+"
+                    ? "text-primary"
+                    : "text-foreground",
                   "focus:border-primary/40 focus:ring-2 focus:ring-primary/10",
                 )}
                 value={s.grade}
-                onChange={(e) => updateSubject(i, 'grade', e.target.value as Grade)}
+                onChange={(e) =>
+                  updateSubject(i, "grade", e.target.value as Grade)
+                }
               >
                 {Object.keys(GRADE_POINTS).map((g) => (
-                  <option key={g} value={g} className="bg-card text-foreground">{g}</option>
+                  <option key={g} value={g} className="bg-card text-foreground">
+                    {g}
+                  </option>
                 ))}
               </select>
               <Button
@@ -111,19 +120,18 @@ export function QPICalculator() {
         </AnimatePresence>
       </div>
 
-      <motion.div
-        layout
-        transition={{ duration: 0.25 }}
-      >
+      <motion.div layout transition={{ duration: 0.25 }}>
         <Button
           onClick={addRow}
           variant="outline"
           className="w-full gap-2 border-dashed border-border hover:border-primary/30 hover:bg-primary/[0.03] rounded-xl py-7 text-muted-foreground hover:text-primary text-base transition-all"
         >
           <Plus className="w-5 h-5" />
-          <span className="font-mono text-sm tracking-wider uppercase">Add Subject</span>
+          <span className="font-mono text-sm tracking-wider uppercase">
+            Add Subject
+          </span>
         </Button>
       </motion.div>
     </div>
-  )
+  );
 }

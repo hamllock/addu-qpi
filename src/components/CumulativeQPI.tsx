@@ -28,11 +28,14 @@ export function CumulativeQPI() {
   const [projectedGrades, setProjectedGrades] = useState<Record<number, Grade>>(
     {},
   );
-  const [excludedFromProjection, setExcludedFromProjection] = useState<Record<number, true>>({});
+  const [excludedFromProjection, setExcludedFromProjection] = useState<
+    Record<number, true>
+  >({});
   const [extraSubjects, setExtraSubjects] = useState<SubjectRecord[]>([]);
   const [showProjection, setShowProjection] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [parseError, setParseError] = useState(false);
   const [addForm, setAddForm] = useState({
     name: "",
     units: 3,
@@ -44,6 +47,11 @@ export function CumulativeQPI() {
 
   const handleGo = () => {
     const parsed = parseCurriculumText(inputText);
+    if (parsed.length === 0) {
+      setParseError(true);
+      return;
+    }
+    setParseError(false);
     setSubjects(parsed);
     setIsParsed(true);
   };
@@ -67,6 +75,7 @@ export function CumulativeQPI() {
       });
       if (extracted.trim()) {
         setInputText(extracted);
+        setParseError(false);
       }
     };
     reader.readAsText(file);
@@ -165,12 +174,17 @@ export function CumulativeQPI() {
   }, [subjects, projectedGrades, extraSubjects, excludedFromProjection]);
 
   const gradedUnits = useMemo(
-    () => subjects.filter((s) => s.included !== false && s.grade !== "N/A").reduce((sum, s) => sum + s.units, 0),
+    () =>
+      subjects
+        .filter((s) => s.included !== false && s.grade !== "N/A")
+        .reduce((sum, s) => sum + s.units, 0),
     [subjects],
   );
 
   const hasProjectionInputs =
-    Object.keys(projectedGrades).length > 0 || extraSubjects.length > 0 || Object.keys(excludedFromProjection).length > 0;
+    Object.keys(projectedGrades).length > 0 ||
+    extraSubjects.length > 0 ||
+    Object.keys(excludedFromProjection).length > 0;
 
   const gradeColor = (grade: Grade) => {
     const p = GRADE_POINTS[grade];
@@ -194,26 +208,26 @@ export function CumulativeQPI() {
 
   const sortedGroupEntries = useMemo(() => {
     return Object.entries(grouped).sort(([aKey], [bKey]) => {
-      const aMatches = aKey.match(/^(\d+)/)
-      const bMatches = bKey.match(/^(\d+)/)
+      const aMatches = aKey.match(/^(\d+)/);
+      const bMatches = bKey.match(/^(\d+)/);
 
       // Non-year keys (OOC, Other, Unknown) go to bottom
-      if (!aMatches && !bMatches) return aKey.localeCompare(bKey)
-      if (!aMatches) return 1
-      if (!bMatches) return -1
+      if (!aMatches && !bMatches) return aKey.localeCompare(bKey);
+      if (!aMatches) return 1;
+      if (!bMatches) return -1;
 
-      const aYear = parseInt(aMatches[1])
-      const bYear = parseInt(bMatches[1])
-      if (aYear !== bYear) return aYear - bYear
+      const aYear = parseInt(aMatches[1]);
+      const bYear = parseInt(bMatches[1]);
+      if (aYear !== bYear) return aYear - bYear;
 
       // Same year: 1st Sem → 0, 2nd Sem → 1, Summer → 2, rest → 99
-      const aSem = (aKey.split(" - ")[1] || "").trim()
-      const bSem = (bKey.split(" - ")[1] || "").trim()
+      const aSem = (aKey.split(" - ")[1] || "").trim();
+      const bSem = (bKey.split(" - ")[1] || "").trim();
       const rank = (s: string) =>
-        /^1/i.test(s) ? 0 : /^2/i.test(s) ? 1 : /^s/i.test(s) ? 2 : 99
-      return rank(aSem) - rank(bSem)
-    })
-  }, [grouped])
+        /^1/i.test(s) ? 0 : /^2/i.test(s) ? 1 : /^s/i.test(s) ? 2 : 99;
+      return rank(aSem) - rank(bSem);
+    });
+  }, [grouped]);
 
   if (!isParsed) {
     return (
@@ -240,10 +254,25 @@ export function CumulativeQPI() {
 The parser reads tab-separated or space-aligned columns:
 Subject Name  Units  Grade`}
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={(e) => {
+              setInputText(e.target.value);
+              setParseError(false);
+            }}
             spellCheck={false}
           />
         </div>
+
+        {parseError && (
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-sm font-mono text-red-400 text-center -mt-4"
+          >
+            No subjects parsed! Make sure you pasted in the right format
+            (tab‑separated or space‑aligned columns) or saved the correct SIS
+            page.
+          </motion.p>
+        )}
 
         {/* Upload HTML */}
         <div className="flex items-center gap-3 justify-center">
@@ -256,10 +285,15 @@ Subject Name  Units  Grade`}
 
         <div className="text-center space-y-1.5">
           <p className="text-sm font-mono text-muted-foreground/70">
-            Save your SIS Curriculum page as <span className="text-foreground/80">Webpage, HTML Only</span>
+            Save your SIS Curriculum page as{" "}
+            <span className="text-foreground/80">Webpage, HTML Only</span>
           </p>
           <p className="text-xs font-mono text-muted-foreground/50">
-            mySIS → Curriculum → Right‑click → Save as → <span className="text-foreground/60">Webpage, HTML Only</span>
+            <a href="https://sis.addu.edu.ph/" target="_blank" rel="noopener noreferrer">
+              <u>sis.addu.edu.ph</u>
+            </a>{" "}
+            → My Curriculum → Right‑click → Save as →{" "}
+            <span className="text-foreground/60">Webpage, HTML Only</span>
           </p>
         </div>
 
@@ -477,9 +511,11 @@ Subject Name  Units  Grade`}
                         Projection
                       </div>
                       <div className="text-xs font-mono text-muted-foreground/50 uppercase tracking-wider">
-                        {missingSubjects.length - Object.keys(excludedFromProjection).length} pending &middot;{" "}
-                        {Object.keys(excludedFromProjection).length} excluded &middot;{" "}
-                        {extraSubjects.length} extra
+                        {missingSubjects.length -
+                          Object.keys(excludedFromProjection).length}{" "}
+                        pending &middot;{" "}
+                        {Object.keys(excludedFromProjection).length} excluded
+                        &middot; {extraSubjects.length} extra
                       </div>
                     </div>
                   </div>
@@ -495,9 +531,9 @@ Subject Name  Units  Grade`}
                 <div className="flex-1 overflow-y-auto min-h-0 px-8 py-6 space-y-8">
                   {/* Cum Laude Thresholds */}
                   <div className="space-y-4">
-                      <div className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/70 font-bold">
-                        Cum Laude Thresholds
-                      </div>
+                    <div className="text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground/70 font-bold">
+                      Cum Laude Thresholds
+                    </div>
                     {CUM_LAUDE_THRESHOLDS.map((t) => {
                       const currentDelta = qpi - t.value;
                       const projectedDelta = projectedQPI - t.value;
@@ -505,9 +541,14 @@ Subject Name  Units  Grade`}
                       const willMeet = projectedDelta >= 0 && !met;
 
                       const needed = t.value - qpi;
-                      const aUnitsNeeded = needed > 0 && gradedUnits > 0
-                        ? Math.ceil((t.value * gradedUnits - qpi * gradedUnits) / (4.0 - t.value) / 3)
-                        : 0;
+                      const aUnitsNeeded =
+                        needed > 0 && gradedUnits > 0
+                          ? Math.ceil(
+                              (t.value * gradedUnits - qpi * gradedUnits) /
+                                (4.0 - t.value) /
+                                3,
+                            )
+                          : 0;
 
                       return (
                         <div key={t.value} className="space-y-2">
@@ -593,86 +634,98 @@ Subject Name  Units  Grade`}
                         {missingSubjects.map((s) => {
                           const isExcluded = !!excludedFromProjection[s._index];
                           return (
-                          <div
-                            key={s._index}
-                            className={cn(
-                              "flex items-center gap-3 p-3 rounded-xl border",
-                              isExcluded
-                                ? "bg-muted/5 border-border/30 opacity-50"
-                                : "bg-muted/20 border-border",
-                            )}
-                          >
-                            <span className={cn(
-                              "flex-1 text-sm md:text-base font-mono truncate",
-                              isExcluded ? "text-muted-foreground/40 line-through" : "text-muted-foreground",
-                            )}>
-                              {s.name || "Untitled"}
-                            </span>
-                            <span className={cn(
-                              "text-sm font-mono w-10 text-right",
-                              isExcluded ? "text-muted-foreground/20" : "text-muted-foreground/60",
-                            )}>
-                              {s.units}un
-                            </span>
-                            {isExcluded ? (
-                              <button
-                                onClick={() => {
-                                  const next = { ...excludedFromProjection };
-                                  delete next[s._index];
-                                  setExcludedFromProjection(next);
-                                }}
-                                className="text-muted-foreground/30 hover:text-primary transition-colors"
-                                title="Restore to projection"
-                              >
-                                <RotateCcw className="w-4 h-4" />
-                              </button>
-                            ) : (
-                              <>
-                              <select
+                            <div
+                              key={s._index}
+                              className={cn(
+                                "flex items-center gap-3 p-3 rounded-xl border",
+                                isExcluded
+                                  ? "bg-muted/5 border-border/30 opacity-50"
+                                  : "bg-muted/20 border-border",
+                              )}
+                            >
+                              <span
                                 className={cn(
-                                  "w-24 border border-input rounded-xl px-2.5 py-2.5 text-center text-sm font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
-                                  projectedGrades[s._index]
-                                    ? gradeColor(projectedGrades[s._index])
-                                    : "text-muted-foreground/40",
+                                  "flex-1 text-sm md:text-base font-mono truncate",
+                                  isExcluded
+                                    ? "text-muted-foreground/40 line-through"
+                                    : "text-muted-foreground",
                                 )}
-                                value={projectedGrades[s._index] || ""}
-                                onChange={(e) => {
-                                  const val = e.target.value as Grade | "";
-                                  setProjectedGrades((prev) => {
-                                    const next = { ...prev };
-                                    if (val) next[s._index] = val;
-                                    else delete next[s._index];
-                                    return next;
-                                  });
-                                }}
                               >
-                                <option
-                                  value=""
-                                  className="bg-card text-muted-foreground/60"
+                                {s.name || "Untitled"}
+                              </span>
+                              <span
+                                className={cn(
+                                  "text-sm font-mono w-10 text-right",
+                                  isExcluded
+                                    ? "text-muted-foreground/20"
+                                    : "text-muted-foreground/60",
+                                )}
+                              >
+                                {s.units}un
+                              </span>
+                              {isExcluded ? (
+                                <button
+                                  onClick={() => {
+                                    const next = { ...excludedFromProjection };
+                                    delete next[s._index];
+                                    setExcludedFromProjection(next);
+                                  }}
+                                  className="text-muted-foreground/30 hover:text-primary transition-colors"
+                                  title="Restore to projection"
                                 >
-                                  —
-                                </option>
-                                {Object.keys(GRADE_POINTS).map((g) => (
-                                  <option key={g} value={g} className="bg-card">
-                                    {g}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                onClick={() =>
-                                  setExcludedFromProjection((prev) => ({
-                                    ...prev,
-                                    [s._index]: true,
-                                  }))
-                                }
-                                className="text-muted-foreground/20 hover:text-destructive transition-colors flex-shrink-0"
-                                title="Exclude from projection"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
-                              </>
-                            )}
-                          </div>
+                                  <RotateCcw className="w-4 h-4" />
+                                </button>
+                              ) : (
+                                <>
+                                  <select
+                                    className={cn(
+                                      "w-24 border border-input rounded-xl px-2.5 py-2.5 text-center text-sm font-mono font-bold outline-none transition-all cursor-pointer bg-muted/30",
+                                      projectedGrades[s._index]
+                                        ? gradeColor(projectedGrades[s._index])
+                                        : "text-muted-foreground/40",
+                                    )}
+                                    value={projectedGrades[s._index] || ""}
+                                    onChange={(e) => {
+                                      const val = e.target.value as Grade | "";
+                                      setProjectedGrades((prev) => {
+                                        const next = { ...prev };
+                                        if (val) next[s._index] = val;
+                                        else delete next[s._index];
+                                        return next;
+                                      });
+                                    }}
+                                  >
+                                    <option
+                                      value=""
+                                      className="bg-card text-muted-foreground/60"
+                                    >
+                                      —
+                                    </option>
+                                    {Object.keys(GRADE_POINTS).map((g) => (
+                                      <option
+                                        key={g}
+                                        value={g}
+                                        className="bg-card"
+                                      >
+                                        {g}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    onClick={() =>
+                                      setExcludedFromProjection((prev) => ({
+                                        ...prev,
+                                        [s._index]: true,
+                                      }))
+                                    }
+                                    className="text-muted-foreground/20 hover:text-destructive transition-colors flex-shrink-0"
+                                    title="Exclude from projection"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -683,9 +736,9 @@ Subject Name  Units  Grade`}
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <Plus className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground/70 font-bold">
-                      Extra Subjects
-                    </span>
+                      <span className="text-sm font-mono uppercase tracking-[0.2em] text-muted-foreground/70 font-bold">
+                        Extra Subjects
+                      </span>
                     </div>
                     {extraSubjects.length === 0 ? (
                       <p className="text-sm font-mono text-muted-foreground/60 px-1">
@@ -779,16 +832,17 @@ Subject Name  Units  Grade`}
                       animate={{ opacity: 1 }}
                       className="flex items-center justify-between"
                     >
-                    <span className="text-xs font-mono text-muted-foreground/70 uppercase tracking-wider">
-                      Projected Overall
-                    </span>
+                      <span className="text-xs font-mono text-muted-foreground/70 uppercase tracking-wider">
+                        Projected Overall
+                      </span>
                       <span className="text-3xl font-sans text-primary tabular-nums tracking-tight">
                         {projectedQPI.toFixed(2)}
                       </span>
                     </motion.div>
                   ) : (
                     <span className="text-xs font-mono text-muted-foreground/60">
-                      Assign grades to pending or extra subjects to see your projected QPI.
+                      Assign grades to pending or extra subjects to see your
+                      projected QPI.
                     </span>
                   )}
                 </div>
@@ -938,20 +992,20 @@ Subject Name  Units  Grade`}
                   {/* Year & Semester */}
                   <div className="flex gap-4">
                     <div className="flex-1 space-y-1.5">
-                    <label
-                      className={cn(
-                        "text-sm font-mono uppercase tracking-wider font-bold",
-                        addForm.outOfCurriculum
-                          ? "text-muted-foreground/20"
-                          : "text-muted-foreground/70",
-                      )}
-                    >
-                      Year Level
-                    </label>
-                    <select
-                      disabled={addForm.outOfCurriculum}
-                      className={cn(
-                        "w-full rounded-xl px-4 py-4 text-base font-mono text-center outline-none transition-all cursor-pointer",
+                      <label
+                        className={cn(
+                          "text-sm font-mono uppercase tracking-wider font-bold",
+                          addForm.outOfCurriculum
+                            ? "text-muted-foreground/20"
+                            : "text-muted-foreground/70",
+                        )}
+                      >
+                        Year Level
+                      </label>
+                      <select
+                        disabled={addForm.outOfCurriculum}
+                        className={cn(
+                          "w-full rounded-xl px-4 py-4 text-base font-mono text-center outline-none transition-all cursor-pointer",
                           addForm.outOfCurriculum
                             ? "bg-muted/10 border border-muted/20 text-muted-foreground/20"
                             : "bg-muted/30 border border-input focus:border-primary/40 focus:ring-2 focus:ring-primary/10",
@@ -975,20 +1029,20 @@ Subject Name  Units  Grade`}
                       </select>
                     </div>
                     <div className="flex-1 space-y-1.5">
-                    <label
-                      className={cn(
-                        "text-sm font-mono uppercase tracking-wider font-bold",
-                        addForm.outOfCurriculum
-                          ? "text-muted-foreground/20"
-                          : "text-muted-foreground/70",
-                      )}
-                    >
-                      Semester
-                    </label>
-                    <select
-                      disabled={addForm.outOfCurriculum}
-                      className={cn(
-                        "w-full rounded-xl px-4 py-4 text-base font-mono text-center outline-none transition-all cursor-pointer",
+                      <label
+                        className={cn(
+                          "text-sm font-mono uppercase tracking-wider font-bold",
+                          addForm.outOfCurriculum
+                            ? "text-muted-foreground/20"
+                            : "text-muted-foreground/70",
+                        )}
+                      >
+                        Semester
+                      </label>
+                      <select
+                        disabled={addForm.outOfCurriculum}
+                        className={cn(
+                          "w-full rounded-xl px-4 py-4 text-base font-mono text-center outline-none transition-all cursor-pointer",
                           addForm.outOfCurriculum
                             ? "bg-muted/10 border border-muted/20 text-muted-foreground/20"
                             : "bg-muted/30 border border-input focus:border-primary/40 focus:ring-2 focus:ring-primary/10",
