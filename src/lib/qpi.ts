@@ -74,13 +74,14 @@ export function parseCurriculumText(text: string): SubjectRecord[] {
 
       // Include the subject if it has a title and units
       if (title && units > 0) {
+        const autoExclude = /arrupe social formation|national service training program|seniors' integration program/i.test(title)
         records.push({
           name: title,
           units,
           grade,
           year: year || "Other",
           semester: semester || "Other",
-          included: grade !== "N/A" // Automatically exclude if it has no valid grade
+          included: !autoExclude && grade !== "N/A"
         })
       }
     }
